@@ -2,13 +2,24 @@ name: SonarQube
 on:
   push:
     branches:
+      - master
       - main
+      - feature/**
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, merged, closed]
+    branches:
+      - master
+      - main
+      - feature/**
+  workflow_dispatch:
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
     steps:
       - uses: actions/checkout@v4
         with:
