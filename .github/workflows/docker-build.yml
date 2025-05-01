@@ -38,7 +38,6 @@ jobs:
           else
             echo "TAG=$(date +%Y%m%d%H%M%S)-${{ github.sha::7 }}" >> $GITHUB_ENV
           fi
-
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.TAG }} .
 
