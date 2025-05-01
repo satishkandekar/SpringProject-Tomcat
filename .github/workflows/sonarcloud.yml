@@ -41,6 +41,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=${{ inputs.project-key }}
-            -Dsonar.organization=${{ inputs.organization }}
+            -Dsonar.projectKey='satishkandekar_spring-boot-hello-world'
+            -Dsonar.organization='satishkandekar'
             -Dsonar.java.binaries=target
