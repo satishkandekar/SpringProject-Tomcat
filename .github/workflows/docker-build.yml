@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - 'feature/**'
-  workflow_dispatch: # Add this to enable manual trigger
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -34,10 +34,8 @@ jobs:
         id: docker_tag
         run: |
           if [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            echo "TAG=latest" >> $GITHUB_OUTPUT
             echo "tag=latest" >> $GITHUB_ENV
           else
-            echo "TAG=$(date +%Y%m%d%H%M%S)-${{ github.sha::7 }}" >> $GITHUB_OUTPUT
             echo "tag=$(date +%Y%m%d%H%M%S)-${{ github.sha::7 }}" >> $GITHUB_ENV
           fi
 
