@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - 'feature/**'
-  workflow_dispatch: # Add this to enable manual trigger
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -30,8 +30,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Set Docker Tag
+        id: docker_tag
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "TAG=latest" >> $GITHUB_OUTPUT
+            echo "tag=latest" >> $GITHUB_ENV
+          else
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            echo "TAG=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_OUTPUT
+            echo "tag=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_ENV
+          fi
+
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:latest .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }} .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }}
