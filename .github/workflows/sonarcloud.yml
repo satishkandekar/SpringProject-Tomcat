@@ -39,10 +39,12 @@ jobs:
             ${{ runner.os }}-m2
 
       - name: SonarCloud Scan
-        run: mvn verify sonar:sonar \
-             -Dsonar.projectKey=satishkandekar_spring-boot-hello-world \
-             -Dsonar.organization=satishkandekar \
-             -Dsonar.host.url=https://sonarcloud.io \
-             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn verify sonar:sonar \
+            -Dsonar.projectKey=satishkandekar_spring-boot-hello-world \
+            -Dsonar.organization=satishkandekar \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
