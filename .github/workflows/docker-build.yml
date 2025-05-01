@@ -30,8 +30,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Set Docker Tag
+        id: docker_tag
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            echo "TAG=latest" >> $GITHUB_ENV
+          else
+            echo "TAG=$(date +%Y%m%d%H%M%S)-${{ github.sha::7 }}" >> $GITHUB_ENV
+          fi
+
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:latest .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.TAG }} .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.TAG }}
+
+      - name: Output Docker Tag
+        run: echo "Docker Image Tag: ${{ env.TAG }}"
