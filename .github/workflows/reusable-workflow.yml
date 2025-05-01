@@ -24,3 +24,4 @@ jobs:
       organization: 'satishkandekar'
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
