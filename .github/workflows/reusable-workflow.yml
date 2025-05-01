@@ -1,29 +1,26 @@
-#Workflow Dispatch Approach
-#New Reusable Orchestrator Workflow existing workflows instead
-name: CI Reusable Workflow
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [master, main, feature/**]
+    branches: [main, master, feature/**]
   pull_request:
-    branches: [master]
+    branches: [main, master]
 
 jobs:
-  trigger-docker-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Docker Build Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: docker-build.yml
-          token: ${{ secrets.GITHUB_TOKEN }}
+  build-container:
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      image-name: 'satishkandekar/spring-boot'
+      java-version: '17'
+    secrets:
+      dockerhub-user: ${{ secrets.DOCKERHUB_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  trigger-sonar-scan:
-    needs: trigger-docker-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger SonarCloud Scan Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: sonarcloud.yml
-          token: ${{ secrets.GITHUB_TOKEN }}
+  code-scan:
+    needs: build-container
+    uses: ./.github/workflows/sonarcloud.yml
+    with:
+      project-key: 'satishkandekar_spring-boot-hello-world'
+      organization: 'satishkandekar'
+    secrets:
+      sonar-token: ${{ secrets.SONAR_TOKEN }}

@@ -1,61 +1,46 @@
-name: Build and Push Docker Image
+name: Reusable Container Builder
 
 on:
-  push:
-    branches:
-      - master
-      - 'feature/**'
-      - main
-  pull_request:
-    types:
-      - closed
-      - merged
-    branches:
-      - master
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      image-name:
+        description: 'Docker image name'
+        required: true
+        type: string
+      java-version:
+        description: 'Java version'
+        default: '17'
+        type: string
+    secrets:
+      dockerhub-user:
+        required: true
+      dockerhub-token:
+        required: true
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
 
       - name: Build with Maven
         run: mvn clean package
 
-      - name: Log in to DockerHub
+      - name: Docker Login
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.dockerhub-user }}
+          password: ${{ secrets.dockerhub-token }}
 
-      - name: Set Docker Tag
-        id: docker_tag
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            echo "TAG=latest" >> $GITHUB_OUTPUT
-            echo "tag=latest" >> $GITHUB_ENV
-          else
-            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-            echo "TAG=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_OUTPUT
-            echo "tag=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_ENV
-          fi
-
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }} .
-
-      - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }}
-
-  # log-event:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Log GitHub Event
-  #       run: echo "${{ toJson(github.event) }}"
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ inputs.image-name }}:latest
