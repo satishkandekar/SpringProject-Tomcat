@@ -34,9 +34,12 @@ jobs:
         id: docker_tag
         run: |
           if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "TAG=latest" >> $GITHUB_OUTPUT
             echo "tag=latest" >> $GITHUB_ENV
           else
-            echo "tag=$(date +%Y%m%d%H%M%S)-${{ github.sha::7 }}" >> $GITHUB_ENV
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            echo "TAG=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_OUTPUT
+            echo "tag=$(date +%Y%m%d%H%M%S)-${SHORT_SHA}" >> $GITHUB_ENV
           fi
 
       - name: Build Docker Image
