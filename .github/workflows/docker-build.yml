@@ -48,5 +48,5 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }}
 
-      - name: Output Docker Tag
-        run: echo "Docker Image Tag: ${{ env.tag }}"
+      # - name: Output Docker Tag
+      #   run: echo "Docker Image Tag: ${{ env.tag }}"
