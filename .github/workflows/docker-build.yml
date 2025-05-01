@@ -5,9 +5,11 @@ on:
     branches:
       - master
       - 'feature/**'
+      - main
   pull_request:
     types:
       - closed
+      - merged
     branches:
       - master
   workflow_dispatch:
