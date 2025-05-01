@@ -54,8 +54,8 @@ jobs:
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-demo:${{ env.tag }}
 
-  log-event:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Log GitHub Event
-        run: echo "${{ toJson(github.event) }}"
+  # log-event:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Log GitHub Event
+  #       run: echo "${{ toJson(github.event) }}"
