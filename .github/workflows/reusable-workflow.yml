@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-container:
-    uses: ./.github/workflows/docker-builde.yml
+    uses: ./.github/workflows/docker-build.yml
     with:
       image-name: 'satishkandekar/spring-boot-app'
       java-version: '8'
