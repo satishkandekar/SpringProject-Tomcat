@@ -11,7 +11,8 @@ jobs:
     uses: ./.github/workflows/docker-build.yml
     with:
       image-name: 'satishkandekar/spring-boot'
-      java-version: '17'
+      jar-filename: 'spring-boot-docker.jar'
+      java-version: '8'
     secrets:
       dockerhub-user: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}

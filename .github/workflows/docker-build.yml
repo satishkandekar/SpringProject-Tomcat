@@ -4,15 +4,15 @@ on:
   workflow_call:
     inputs:
       image-name:
-        description: 'Docker image name'
+        description: 'Docker image name (e.g., username/repo)'
         required: true
         type: string
       java-version:
-        description: 'Java version'
-        default: '17'
+        description: 'Java version for build'
+        default: '8'
         type: string
     secrets:
-      dockerhub-user:
+      dockerhub-username:
         required: true
       dockerhub-token:
         required: true
@@ -23,24 +23,41 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for proper Docker builds
 
-      - name: Set up Java
+      - name: Set up Java ${{ inputs.java-version }}
         uses: actions/setup-java@v3
         with:
           java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn clean package
+      - name: Build with Maven and verify JAR
+        run: |
+          # Build the application
+          mvn clean package
+          
+          # Verify the exact JAR file exists
+          if [ ! -f "target/spring-boot-docker.jar" ]; then
+            echo "::error::JAR file not found at target/spring-boot-docker.jar"
+            echo "Found files in target/:"
+            ls -la target/
+            exit 1
+          fi
+          echo "JAR file successfully built"
 
-      - name: Docker Login
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.dockerhub-user }}
+          username: ${{ secrets.dockerhub-username }}
           password: ${{ secrets.dockerhub-token }}
 
-      - name: Build and Push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: .
           push: true
           tags: ${{ inputs.image-name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
