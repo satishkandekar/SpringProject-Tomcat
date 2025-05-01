@@ -12,9 +12,7 @@ on:
         required: true
         type: string
     secrets:
-      SONAR_TOKEN:
-        required: true
-      GITHUB_TOKEN:
+      SONARCLOUD_TOKEN:
         required: true
 
 jobs:
@@ -40,9 +38,9 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=satishkandekar_spring-boot-hello-world
-            -Dsonar.organization=satishkandekar
+            -Dsonar.projectKey=${{ inputs.project-key }}
+            -Dsonar.organization=${{ inputs.organization }}
             -Dsonar.java.binaries=target
