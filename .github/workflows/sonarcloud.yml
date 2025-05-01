@@ -31,16 +31,18 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
+            -Dsonar.ci.autoconfig.disabled=true
+            -Dsonar.ci.skipAutomaticAnalysis=true
             -Dsonar.projectKey='satishkandekar_spring-boot-hello-world'
             -Dsonar.organization='satishkandekar'
             -Dsonar.java.binaries=target
