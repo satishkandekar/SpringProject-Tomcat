@@ -1,4 +1,4 @@
-name: Reusable Code Scanner
+name: Reusable SonarCloud Scan
 
 on:
   workflow_call:
@@ -12,13 +12,17 @@ on:
         required: true
         type: string
     secrets:
-      sonar-token:
+      SONAR_TOKEN:
+        required: true
+      GITHUB_TOKEN:
         required: true
 
 jobs:
   scan:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
+      pull-requests: write
       security-events: write
     steps:
       - name: Checkout code
@@ -31,11 +35,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
-          SONAR_TOKEN: ${{ secrets.sonar-token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: >
             -Dsonar.projectKey=satishkandekar_spring-boot-hello-world
