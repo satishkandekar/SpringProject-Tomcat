@@ -1,0 +1,29 @@
+#Workflow Dispatch Approach
+#New Reusable Orchestrator Workflow existing workflows instead
+name: CI Reusable Workflow
+
+on:
+  push:
+    branches: [master, main, feature/**]
+  pull_request:
+    branches: [master]
+
+jobs:
+  trigger-docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Docker Build Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: dockerbuild.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  trigger-sonar-scan:
+    needs: trigger-docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger SonarCloud Scan Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: sonarque.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
