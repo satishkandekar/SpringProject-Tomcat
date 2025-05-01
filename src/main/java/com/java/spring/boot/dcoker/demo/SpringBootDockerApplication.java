@@ -13,7 +13,7 @@ public class SpringBootDockerApplication {
 	
 	@GetMapping("/message")
 	public String getMessage() {
-		return "welcome to Dev Spring";
+		return "Hello from Feature Branch!";
 		
 	}
 
