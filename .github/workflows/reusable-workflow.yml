@@ -15,7 +15,7 @@ jobs:
       - name: Trigger Docker Build Workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: dockerbuild.yml
+          workflow: docker-build.yml
           token: ${{ secrets.GITHUB_TOKEN }}
 
   trigger-sonar-scan:
@@ -25,5 +25,5 @@ jobs:
       - name: Trigger SonarCloud Scan Workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: sonarque.yml
+          workflow: sonarcloud.yml
           token: ${{ secrets.GITHUB_TOKEN }}
