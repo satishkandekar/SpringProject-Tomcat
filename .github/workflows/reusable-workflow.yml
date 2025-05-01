@@ -12,7 +12,6 @@ jobs:
     with:
       image-name: 'satishkandekar/spring-boot'
       java-version: '8'
-    secrets:
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       password: ${{ secrets.DOCKERHUB_TOKEN }}
 
