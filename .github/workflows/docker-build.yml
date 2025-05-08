@@ -1,18 +1,18 @@
 name: Build and Push Docker Image
 
-# on:
-#   push:
-#     branches:
-#       - master
-#       - 'feature/**'
-#       - main
-#   pull_request:
-#     types:
-#       - closed
-#       - merged
-#     branches:
-#       - master
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - master
+      - 'feature/**'
+      - main
+  pull_request:
+    types:
+      - closed
+      - merged
+    branches:
+      - master
+  workflow_dispatch:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
